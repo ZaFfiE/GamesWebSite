@@ -1,30 +1,1313 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="sl-theme-dark">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Games</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0d12">
+<title>Pocket Arcade</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --surface: #131720;
+    --surface-2: #1a1f2b;
+    --border: #262d3b;
+    --text: #e7eaf0;
+    --muted: #98a2b3;
+    --accent: #a3e635;
+    --accent-strong: #84cc16;
+    --danger: #fb7185;
+    --radius: 14px;
+    color-scheme: dark;
+  }
+  .sl-theme-dark {
+    --sl-color-primary-50: #1a2e05;
+    --sl-color-primary-100: #263f0a;
+    --sl-color-primary-200: #365314;
+    --sl-color-primary-300: #3f6212;
+    --sl-color-primary-400: #4d7c0f;
+    --sl-color-primary-500: #65a30d;
+    --sl-color-primary-600: #84cc16;
+    --sl-color-primary-700: #a3e635;
+    --sl-color-primary-800: #bef264;
+    --sl-color-primary-900: #d9f99d;
+    --sl-color-primary-950: #ecfccb;
+    --sl-font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+    --sl-font-mono: "Geist Mono", ui-monospace, monospace;
+    --sl-focus-ring-color: var(--accent);
+    --sl-focus-ring-width: 2px;
+    --sl-panel-background-color: var(--surface);
+    --sl-panel-border-color: var(--border);
+    --sl-overlay-background-color: rgb(3 5 8 / 0.72);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  sl-dialog:not(:defined), sl-drawer:not(:defined) { display: none; }
+  sl-tab-group:not(:defined) { visibility: hidden; }
+
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--sl-font-sans);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background: radial-gradient(1100px 480px at 12% -10%, rgb(163 230 53 / 0.07), transparent 60%), var(--bg);
+  }
+  h1, h2, h3 { margin: 0; line-height: 1.15; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  kbd {
+    font-family: var(--sl-font-mono); font-size: 0.75rem; color: var(--text);
+    border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px;
+    padding: 1px 6px; background: var(--surface);
+  }
+
+  .skip {
+    position: absolute; left: 12px; top: -60px; z-index: 100;
+    background: var(--accent); color: #0b0d12; padding: 8px 14px; border-radius: 8px;
+    font-weight: 600; text-decoration: none;
+  }
+  .skip:focus { top: 12px; }
+
+  .container { width: min(1120px, 100% - 32px); margin-inline: auto; }
+
+  /* Header */
+  .site-header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgb(11 13 18 / 0.82); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner { display: flex; align-items: center; gap: 16px; height: 60px; }
+  .brand { display: flex; align-items: center; font-weight: 700; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
+  .brand-mark {
+    width: 9px; height: 9px; border-radius: 2px; background: var(--accent);
+    box-shadow: 11px 0 0 var(--accent), 0 11px 0 var(--accent), 11px 11px 0 rgb(163 230 53 / 0.35);
+    margin: 0 22px -10px 0; transform: translateY(-5px);
+  }
+  .nav { display: flex; gap: 4px; }
+  .nav a {
+    padding: 6px 12px; border-radius: 8px; color: var(--muted);
+    text-decoration: none; font-weight: 500; font-size: 0.95rem;
+  }
+  .nav a:hover { color: var(--text); background: var(--surface); }
+  .nav a[aria-current="page"] { color: var(--text); background: var(--surface-2); }
+  .header-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  @media (max-width: 640px) {
+    .header-inner { gap: 8px; }
+    .brand-text, .label-sm { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .brand-mark { margin-right: 14px; }
+    .nav a { padding: 6px 10px; }
+  }
+
+  main { padding: 32px 0 64px; }
+  main:focus { outline: none; }
+
+  /* Home */
+  .eyebrow { font-family: var(--sl-font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+  .home-intro { margin-bottom: 28px; max-width: 640px; }
+  .home-intro h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.03em; margin: 10px 0 12px; }
+  .lede { color: var(--muted); font-size: 1.05rem; text-wrap: pretty; }
+  .home-grid { display: grid; gap: 24px; }
+  @media (min-width: 920px) { .home-grid { grid-template-columns: 1fr 320px; align-items: start; } }
+  .games { display: grid; gap: 20px; list-style: none; margin: 0; padding: 0; }
+  @media (min-width: 640px) { .games { grid-template-columns: 1fr 1fr; } }
+  .game-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; display: flex; flex-direction: column; height: 100%;
+    transition: border-color 0.2s;
+  }
+  .game-card:hover { border-color: #3a4458; }
+  .game-card:focus-within { border-color: var(--accent); }
+  .art {
+    aspect-ratio: 16 / 9; display: grid; gap: 4px; padding: 18px; align-content: center;
+    background: #0f131b; border-bottom: 1px solid var(--border);
+  }
+  .art span { aspect-ratio: 1; }
+  .art-snake { grid-template-columns: repeat(16, 1fr); }
+  .art-snake span { border-radius: 3px; background: #161c28; }
+  .art-snake .on { background: var(--accent-strong); }
+  .art-snake .head { background: var(--accent); }
+  .art-snake .food { background: var(--danger); border-radius: 50%; transform: scale(0.7); }
+  .art-mines { grid-template-columns: repeat(10, 1fr); }
+  .art-mines span {
+    border-radius: 4px; background: var(--surface-2); display: grid; place-items: center;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+    font: 600 clamp(0.6rem, 1.4vw, 0.8rem) var(--sl-font-mono); color: var(--text);
+  }
+  .art-mines .o { background: #0a0d13; box-shadow: none; }
+  .art-mines .n1 { color: var(--accent); }
+  .art-mines .n3 { color: var(--danger); }
+  .art-mines .f::after { content: ""; width: 38%; height: 42%; background: var(--danger); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .card-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .card-meta { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 0.8rem; flex-wrap: wrap; }
+  .card-body h2 { font-size: 1.35rem; letter-spacing: -0.01em; }
+  .card-body p { color: var(--muted); text-wrap: pretty; }
+  .card-actions { margin-top: auto; display: flex; gap: 8px; padding-top: 6px; flex-wrap: wrap; }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .panel-head h2 { font-size: 1rem; }
+  .panel-section + .panel-section { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 14px; }
+  .panel h3 {
+    font: 500 0.72rem var(--sl-font-mono); text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between;
+  }
+  .panel-foot { margin-top: 16px; }
+  .panel-foot sl-button { width: 100%; }
+
+  /* Score lists */
+  .mini { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .mini li { display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; }
+  .mini li.is-new { background: rgb(163 230 53 / 0.08); }
+  .who { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .val { font-family: var(--sl-font-mono); font-variant-numeric: tabular-nums; }
+  .rank {
+    display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+    font: 600 0.72rem var(--sl-font-mono); background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+  }
+  .rank-1 { background: var(--accent); color: #0b0d12; border-color: transparent; }
+  .rank-2, .rank-3 { color: var(--text); border-color: #3a4458; }
+
+  .sk-row { display: grid; grid-template-columns: 24px 1fr 48px; gap: 10px; align-items: center; padding: 8px; }
+  .sk-full .sk-row { grid-template-columns: 28px 1fr 72px 64px; padding: 16px; border-bottom: 1px solid var(--border); }
+  .sk-full { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .sk-full .sk-row:last-child { border-bottom: 0; }
+  sl-skeleton.sk-rank { height: 24px; width: 24px; --border-radius: 50%; }
+  sl-skeleton.sk-name { height: 12px; width: 70%; }
+  sl-skeleton.sk-val { height: 12px; }
+
+  .state { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 36px 16px; border: 1px dashed var(--border); border-radius: 12px; }
+  .state.is-compact { padding: 16px 12px; gap: 6px; }
+  .state sl-icon { font-size: 1.75rem; color: var(--muted); }
+  .state.is-compact sl-icon { font-size: 1.25rem; }
+  .state-title { font-weight: 600; }
+  .state-text { color: var(--muted); max-width: 38ch; margin-bottom: 4px; }
+  .alert-actions { margin-top: 10px; }
+
+  /* Leaderboard */
+  .page-head { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+  .page-head h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.03em; margin-top: 8px; }
+  .page-head p { color: var(--muted); margin-top: 6px; }
+  sl-tab-group { --indicator-color: var(--accent); --track-color: var(--border); }
+  .board-slot { padding-top: 16px; min-height: 220px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  table.board { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  .board th {
+    text-align: left; font: 500 0.72rem var(--sl-font-mono); text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--border);
+  }
+  .board td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .board tr:last-child td { border-bottom: 0; }
+  .board .num { text-align: right; font-family: var(--sl-font-mono); font-variant-numeric: tabular-nums; }
+  .board .date { color: var(--muted); text-align: right; white-space: nowrap; }
+  .board td.who { max-width: 240px; }
+  .board tr.is-new td { background: rgb(163 230 53 / 0.07); }
+  .board tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+  .board sl-badge { margin-left: 6px; vertical-align: middle; }
+  @media (max-width: 520px) { .board .date { display: none; } .board th, .board td { padding: 12px; } }
+
+  /* Play */
+  .play-head { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .play-head h1 { font-size: 1.6rem; letter-spacing: -0.02em; }
+  .play-layout { display: grid; gap: 16px; justify-items: center; }
+  .hud { width: min(100%, 520px); display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 8px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; min-width: 0; }
+  .stat-label { font: 500 0.68rem var(--sl-font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .stat-value { font: 600 1.4rem var(--sl-font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .hud-actions { display: flex; gap: 6px; align-items: center; padding-left: 4px; }
+  @media (max-width: 560px) {
+    .hud { grid-template-columns: repeat(3, 1fr); }
+    .hud-actions { grid-column: 1 / -1; justify-content: center; padding: 0; }
+    .stat-value { font-size: 1.15rem; }
+  }
+  .stage { position: relative; width: min(100%, 520px); aspect-ratio: 1; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: #0f131b; }
+  #game-surface { position: absolute; inset: 0; }
+  #game-surface:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 16px; }
+  #game-surface canvas { display: block; width: 100%; height: 100%; }
+
+  .mines { display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr); gap: 4px; padding: 12px; height: 100%; }
+  .mines [role="row"] { display: contents; }
+  .mines [role="gridcell"] { display: grid; min-width: 0; min-height: 0; }
+  .cell {
+    appearance: none; border: 0; margin: 0; padding: 0; width: 100%; height: 100%;
+    border-radius: 7px; background: var(--surface-2); color: var(--text);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), inset 0 -2px 0 rgb(0 0 0 / 0.3);
+    font: 700 clamp(0.85rem, 3.4vw, 1.15rem) var(--sl-font-mono);
+    cursor: pointer; display: grid; place-items: center; transition: background 0.12s;
+  }
+  .cell:hover { background: #232a3a; }
+  .cell.open { background: #0a0d13; box-shadow: inset 0 0 0 1px #171c27; cursor: default; }
+  .cell[data-n="1"] { color: var(--accent); }
+  .cell[data-n="3"], .cell[data-n="4"], .cell[data-n="5"], .cell[data-n="6"], .cell[data-n="7"], .cell[data-n="8"] { color: var(--danger); }
+  .cell.flagged { color: var(--danger); }
+  .cell.mine::after { content: ""; width: 40%; height: 40%; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 3px rgb(231 234 240 / 0.15); }
+  .cell.boom { background: var(--danger); }
+  .cell.boom::after { background: #0b0d12; box-shadow: none; }
+  .cell.wrong { background: #0a0d13; color: var(--muted); text-decoration: line-through; }
+  .cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; position: relative; z-index: 1; }
+
+  .overlay {
+    position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px;
+    text-align: center; padding: 24px; background: rgb(11 13 18 / 0.8); backdrop-filter: blur(3px);
+    animation: fade 0.2s ease;
+  }
+  .overlay[data-tone="paused"] { background: rgb(11 13 18 / 0.95); }
+  .overlay h2 { font-size: clamp(1.5rem, 5vw, 2.1rem); letter-spacing: -0.02em; }
+  .overlay[data-tone="win"] h2 { color: var(--accent); }
+  .overlay[data-tone="lost"] h2 { color: var(--danger); }
+  .overlay p { color: var(--muted); max-width: 32ch; text-wrap: pretty; }
+  .overlay-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  .help { color: var(--muted); font-size: 0.875rem; text-align: center; max-width: 520px; line-height: 2; }
+  .dpad { display: none; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 52px); gap: 8px; }
+  .dpad [data-dir="up"] { grid-column: 2; }
+  .dpad [data-dir="left"] { grid-column: 1; grid-row: 2; }
+  .dpad [data-dir="down"] { grid-column: 2; grid-row: 2; }
+  .dpad [data-dir="right"] { grid-column: 3; grid-row: 2; }
+  @media (max-width: 720px), (hover: none) { #view-play[data-game="snake"] .dpad { display: grid; } }
+  #view-play[data-game="snake"] .only-mines, #view-play[data-game="minesweeper"] .only-snake { display: none; }
+
+  /* Dialog */
+  sl-dialog { --width: 420px; }
+  sl-dialog::part(panel), sl-drawer::part(panel) { border: 1px solid var(--border); }
+  .save-summary {
+    display: grid; justify-items: center; gap: 2px; padding: 18px; margin-bottom: 18px;
+    border-radius: 12px; background: #0f131b; border: 1px solid var(--border); text-align: center;
+  }
+  .save-eyebrow { font: 500 0.72rem var(--sl-font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .save-value { font: 700 2.6rem var(--sl-font-mono); color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+  .save-rank { color: var(--muted); font-size: 0.9rem; }
+  .save-form { display: grid; gap: 16px; }
+  .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* Demo drawer */
+  .demo { display: grid; gap: 22px; }
+  .demo h3 { font: 500 0.72rem var(--sl-font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .demo-note { color: var(--muted); font-size: 0.85rem; }
+
+  .site-footer { border-top: 1px solid var(--border); padding: 20px 0 28px; color: var(--muted); font-size: 0.85rem; }
+  .site-footer .container { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <h1>Games</h1>
-  </header>
-  <main class="container">
-    <section>
-      <h2>Available Games</h2>
-      <ul class="game-list">
-        <li>
-          <a class="game-card" href="snake.html">
-            <div class="game-title">Snake</div>
-            <div class="game-desc">Classic grid-based snake. Eat food, avoid walls and yourself.</div>
-          </a>
-        </li>
-      </ul>
+<a class="skip" href="#main" id="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#/home" class="brand" aria-label="Pocket Arcade home"><span class="brand-mark" aria-hidden="true"></span><span class="brand-text">Pocket Arcade</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#/home" data-nav="home">Games</a>
+      <a href="#/leaderboard" data-nav="leaderboard">Leaderboard</a>
+    </nav>
+    <div class="header-tools">
+      <sl-badge id="net-badge" variant="warning" pill hidden>Slow network</sl-badge>
+      <sl-button size="small" id="open-demo">
+        <sl-icon slot="prefix" name="sliders"></sl-icon><span class="label-sm">Demo states</span>
+      </sl-button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="container">
+
+    <!-- HOME -->
+    <section id="view-home" aria-labelledby="home-title">
+      <div class="home-intro">
+        <span class="eyebrow">2 games · no sign-up</span>
+        <h1 id="home-title" tabindex="-1">Quick games. Big scores.</h1>
+        <p class="lede">Two pocket-sized classics, tuned for keyboard and touch. Play a round, save your name, climb the board.</p>
+      </div>
+
+      <div class="home-grid">
+        <ul class="games" aria-label="Games">
+          <li>
+            <article class="game-card" aria-labelledby="card-snake">
+              <div class="art art-snake" aria-hidden="true"></div>
+              <div class="card-body">
+                <div class="card-meta"><sl-tag size="small" pill>Arcade</sl-tag><span><kbd>Arrows</kbd> / <kbd>WASD</kbd></span></div>
+                <h2 id="card-snake">Snake</h2>
+                <p>Eat, grow, don&apos;t bite your tail. The faster you score, the faster it gets.</p>
+                <div class="card-actions">
+                  <sl-button variant="primary" href="#/play/snake"><sl-icon slot="prefix" name="play-fill"></sl-icon>Play Snake</sl-button>
+                  <sl-button variant="text" href="#/leaderboard/snake">View scores</sl-button>
+                </div>
+              </div>
+            </article>
+          </li>
+          <li>
+            <article class="game-card" aria-labelledby="card-mines">
+              <div class="art art-mines" aria-hidden="true"></div>
+              <div class="card-body">
+                <div class="card-meta"><sl-tag size="small" pill>Puzzle</sl-tag><span><kbd>Enter</kbd> reveal · <kbd>F</kbd> flag</span></div>
+                <h2 id="card-mines">Minesweeper</h2>
+                <p>A 9×9 field, ten mines, one clock. Clear it fast to rank higher.</p>
+                <div class="card-actions">
+                  <sl-button variant="primary" href="#/play/minesweeper"><sl-icon slot="prefix" name="play-fill"></sl-icon>Play Minesweeper</sl-button>
+                  <sl-button variant="text" href="#/leaderboard/minesweeper">View scores</sl-button>
+                </div>
+              </div>
+            </article>
+          </li>
+        </ul>
+
+        <aside class="panel" aria-labelledby="top-title">
+          <div class="panel-head">
+            <h2 id="top-title">Top scores</h2>
+            <sl-icon-button name="arrow-clockwise" label="Refresh top scores" id="refresh-top"></sl-icon-button>
+          </div>
+          <section class="panel-section" aria-labelledby="top-snake">
+            <h3 id="top-snake">Snake <span>Score</span></h3>
+            <div data-compact="snake" aria-live="polite"></div>
+          </section>
+          <section class="panel-section" aria-labelledby="top-mines">
+            <h3 id="top-mines">Minesweeper <span>Time</span></h3>
+            <div data-compact="minesweeper" aria-live="polite"></div>
+          </section>
+          <div class="panel-foot">
+            <sl-button href="#/leaderboard" size="small">Full leaderboard<sl-icon slot="suffix" name="arrow-right"></sl-icon></sl-button>
+          </div>
+        </aside>
+      </div>
     </section>
-  </main>
-  <footer class="site-footer">
-    <a href="index.html">Home</a>
-  </footer>
+
+    <!-- PLAY -->
+    <section id="view-play" aria-labelledby="play-title" hidden>
+      <div class="play-head">
+        <sl-button href="#/home" variant="text" size="small"><sl-icon slot="prefix" name="arrow-left"></sl-icon>All games</sl-button>
+        <h1 id="play-title" tabindex="-1">Snake</h1>
+      </div>
+      <div class="play-layout">
+        <div class="hud" role="group" aria-label="Game status">
+          <div class="stat"><span class="stat-label" data-hud-label>Score</span><span class="stat-value" data-hud-value>0</span></div>
+          <div class="stat"><span class="stat-label" data-hud-label>Time</span><span class="stat-value" data-hud-value>0:00</span></div>
+          <div class="stat"><span class="stat-label" data-hud-label>Record</span><span class="stat-value" data-hud-value>—</span></div>
+          <div class="hud-actions">
+            <sl-button size="small" id="btn-pause" disabled><sl-icon slot="prefix" name="pause-fill"></sl-icon>Pause</sl-button>
+            <sl-tooltip content="Restart">
+              <sl-icon-button name="arrow-counterclockwise" label="Restart game" id="btn-restart"></sl-icon-button>
+            </sl-tooltip>
+          </div>
+        </div>
+
+        <div class="stage">
+          <div id="game-surface" aria-describedby="controls-help"></div>
+          <div class="overlay" id="overlay" hidden>
+            <h2 id="overlay-title"></h2>
+            <p id="overlay-text"></p>
+            <div class="overlay-actions" id="overlay-actions"></div>
+          </div>
+        </div>
+
+        <p class="help" id="controls-help"></p>
+
+        <div class="dpad only-snake" aria-label="Touch controls" role="group">
+          <sl-button data-dir="up" circle size="large"><sl-icon name="caret-up-fill" label="Up"></sl-icon></sl-button>
+          <sl-button data-dir="left" circle size="large"><sl-icon name="caret-left-fill" label="Left"></sl-icon></sl-button>
+          <sl-button data-dir="down" circle size="large"><sl-icon name="caret-down-fill" label="Down"></sl-icon></sl-button>
+          <sl-button data-dir="right" circle size="large"><sl-icon name="caret-right-fill" label="Right"></sl-icon></sl-button>
+        </div>
+        <sl-switch id="flag-mode" class="only-mines" help-text="Tap or click cells to place flags instead of revealing.">Flag mode</sl-switch>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="view-leaderboard" aria-labelledby="board-title" hidden>
+      <div class="page-head">
+        <div>
+          <span class="eyebrow">Hall of fame</span>
+          <h1 id="board-title" tabindex="-1">Leaderboard</h1>
+          <p>Snake ranks by highest score. Minesweeper ranks by fastest clear.</p>
+        </div>
+        <sl-button id="refresh-board" size="small"><sl-icon slot="prefix" name="arrow-clockwise"></sl-icon>Refresh</sl-button>
+      </div>
+      <sl-tab-group id="board-tabs">
+        <sl-tab slot="nav" panel="snake">Snake</sl-tab>
+        <sl-tab slot="nav" panel="minesweeper">Minesweeper</sl-tab>
+        <sl-tab-panel name="snake"><div class="board-slot" data-board="snake"></div></sl-tab-panel>
+        <sl-tab-panel name="minesweeper"><div class="board-slot" data-board="minesweeper"></div></sl-tab-panel>
+      </sl-tab-group>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <span>Pocket Arcade — a static mini-games site.</span>
+    <span><kbd>Tab</kbd> to move · <kbd>Enter</kbd> to activate · <kbd>Esc</kbd> closes dialogs</span>
+  </div>
+</footer>
+
+<!-- Save score dialog -->
+<sl-dialog id="save-dialog" label="Save your score">
+  <div class="save-summary">
+    <span class="save-eyebrow"><span id="save-game">Snake</span> · <span id="save-metric">Score</span></span>
+    <span class="save-value" id="save-value">0</span>
+    <span class="save-rank" id="save-rank"></span>
+  </div>
+  <form id="save-form" class="save-form">
+    <sl-input id="save-name" name="player" label="Player name" placeholder="e.g. Mira" required minlength="2" maxlength="16" autocomplete="nickname" autofocus help-text="2–16 characters. Shown publicly on the leaderboard."></sl-input>
+    <sl-alert id="save-error" variant="danger">
+      <sl-icon slot="icon" name="wifi-off"></sl-icon>
+      <strong>Couldn&apos;t save your score.</strong><br>
+      The server didn&apos;t respond. Your score is kept — try again in a moment.
+    </sl-alert>
+    <div class="dialog-actions">
+      <sl-button id="save-cancel" variant="text">Cancel</sl-button>
+      <sl-button id="save-submit" type="submit" variant="primary"><sl-icon slot="prefix" name="cloud-arrow-up"></sl-icon>Save score</sl-button>
+    </div>
+  </form>
+</sl-dialog>
+
+<!-- Demo states drawer -->
+<sl-drawer id="demo-drawer" label="Demo states">
+  <div class="demo">
+    <div>
+      <sl-radio-group id="net-mode" label="Network" value="normal">
+        <sl-radio-button value="normal">Normal</sl-radio-button>
+        <sl-radio-button value="slow">Slow</sl-radio-button>
+        <sl-radio-button value="offline">Offline</sl-radio-button>
+      </sl-radio-group>
+      <p class="demo-note">Slow stretches loading skeletons. Offline makes loading and saving fail so you can see error states.</p>
+    </div>
+    <sl-divider></sl-divider>
+    <div>
+      <h3>Data</h3>
+      <div class="demo-row">
+        <sl-button size="small" id="clear-data"><sl-icon slot="prefix" name="trash"></sl-icon>Clear all scores</sl-button>
+        <sl-button size="small" id="restore-data"><sl-icon slot="prefix" name="arrow-repeat"></sl-icon>Restore samples</sl-button>
+      </div>
+      <p class="demo-note">Clearing shows the empty leaderboard state.</p>
+    </div>
+    <sl-divider></sl-divider>
+    <div>
+      <h3>Quick previews</h3>
+      <div class="demo-row">
+        <sl-button size="small" id="preview-dialog">Save dialog</sl-button>
+        <sl-button size="small" id="preview-success">Success toast</sl-button>
+        <sl-button size="small" id="preview-error">Error toast</sl-button>
+      </div>
+    </div>
+  </div>
+  <sl-button slot="footer" variant="primary" id="close-demo">Done</sl-button>
+</sl-drawer>
+
+<div class="sr-only" aria-live="polite" id="sr-status"></div>
+
+<script type="module">
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const fmtDate = (iso) => new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' }).format(new Date(iso));
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const GAMES = {
+    snake: { name: 'Snake', metric: 'Score', higherIsBetter: true, format: (v) => v.toLocaleString('en') },
+    minesweeper: { name: 'Minesweeper', metric: 'Time', higherIsBetter: false, format: fmtTime },
+  };
+
+  // Local storage-backed API replacing the fake in-memory API
+  const KEY = 'pa.scores';
+  let uid = 0;
+  const sim = { network: 'normal' }; // 'normal' | 'slow' | 'offline'
+  let lastSavedId = null;
+  let lastName = '';
+
+  const latency = (ms) => (sim.network === 'slow' ? ms * 3.5 : ms);
+
+  const daysAgo = (d) => new Date(Date.now() - d * 864e5).toISOString();
+  const row = (name, value, d) => ({ id: `e${++uid}`, name, value, date: daysAgo(d) });
+  const seedData = () => ({
+    snake: [row('Mira', 410, 1), row('Kofi', 380, 2), row('Juno', 300, 2), row('Ash', 250, 4), row('Pip', 190, 5), row('Rae', 140, 7), row('Theo', 90, 9)],
+    minesweeper: [row('Lin', 38, 1), row('Oscar', 52, 3), row('Mira', 61, 3), row('Dev', 74, 6), row('Sana', 90, 8), row('Bo', 121, 10)],
+  });
+
+  function getDb() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    const seeded = seedData();
+    setDb(seeded);
+    return seeded;
+  }
+  function setDb(db) {
+    localStorage.setItem(KEY, JSON.stringify(db));
+  }
+  function ranked(g) {
+    const db = getDb();
+    const list = Array.isArray(db[g]) ? db[g] : [];
+    const sorted = [...list].sort((a, b) => (GAMES[g].higherIsBetter ? b.value - a.value : a.value - b.value));
+    return sorted;
+  }
+  const record = (g) => ranked(g)[0]?.value ?? null;
+  const projectedRank = (g, v) => ranked(g).filter((e) => (GAMES[g].higherIsBetter ? e.value > v : e.value < v)).length + 1;
+
+  const api = {
+    async list(g) {
+      await wait(latency(650));
+      if (sim.network === 'offline') throw new Error('offline');
+      return ranked(g).slice(0, 50);
+    },
+    async save(g, name, value) {
+      await wait(latency(850));
+      if (sim.network === 'offline') throw new Error('offline');
+      const db = getDb();
+      const entry = { id: `e${++uid}`, name, value, date: new Date().toISOString() };
+      db[g] = Array.isArray(db[g]) ? db[g] : [];
+      db[g].push(entry);
+      setDb(db);
+      const rank = ranked(g).findIndex((e) => e.id === entry.id) + 1;
+      return { entry, rank };
+    },
+    clear() {
+      setDb({ snake: [], minesweeper: [] });
+    },
+    restore() {
+      setDb(seedData());
+    }
+  };
+
+  // Expose test helpers to window for e2e control and mocking
+  // Note: kept minimal; used by Playwright tests to control data and states.
+  window.AppTest = {
+    api,
+    sim,
+    getDb,
+    setDb,
+    // Save call counter helpers for tests
+    _wrappedSave: false,
+    saveCallCount: 0,
+    wrapSaveCounter() {
+      if (this._wrappedSave) return;
+      const orig = api.save;
+      const self = this;
+      api.save = async (...args) => {
+        self.saveCallCount++;
+        return orig(...args);
+      };
+      this._wrappedSave = true;
+    },
+    resetSaveCounter() { this.saveCallCount = 0; },
+    getSaveCallCount() { return this.saveCallCount; },
+    openSavePreview(game, value, elapsed = 0) {
+      pendingResult = { game, value, elapsed, saved: false, preview: true };
+      return openSave();
+    }
+  };
+
+  // ---------- Feedback helpers ----------
+  const live = $('#sr-status');
+  function announce(msg) {
+    live.textContent = '';
+    setTimeout(() => (live.textContent = msg), 60);
+  }
+  async function notify(message, variant = 'primary', icon = 'info-circle', duration = 4000) {
+    await customElements.whenDefined('sl-alert');
+    const alert = document.createElement('sl-alert');
+    alert.setAttribute('variant', variant);
+    alert.setAttribute('closable', '');
+    alert.setAttribute('duration', String(duration));
+    alert.innerHTML = `<sl-icon slot="icon" name="${icon}"></sl-icon>${esc(message)}`;
+    alert.toast();
+  }
+
+  // ---------- Score list rendering (loading / empty / error / success) ----------
+  const rankCls = (i) => `rank rank-${i <= 3 ? i : 'n'}`;
+  function skeletonHtml(compact, n) {
+    const rows = Array.from({ length: n }, () =>
+      `<div class="sk-row"><sl-skeleton effect="pulse" class="sk-rank"></sl-skeleton><sl-skeleton effect="pulse" class="sk-name"></sl-skeleton><sl-skeleton effect="pulse" class="sk-val"></sl-skeleton>${compact ? '' : '<sl-skeleton effect="pulse" class="sk-val"></sl-skeleton>'}</div>`
+    ).join('');
+    return `<div class="${compact ? '' : 'sk-full'}">${rows}</div><span class="sr-only">Loading scores…</span>`;
+  }
+  function compactHtml(g, rows) {
+    return `<ol class="mini" role="list">${rows.map((e, i) => `
+      <li class="${e.id === lastSavedId ? 'is-new' : ''}">
+        <span class="${rankCls(i + 1)}">${i + 1}</span>
+        <span class="who">${esc(e.name)}</span>
+        <span class="val">${GAMES[g].format(e.value)}</span>
+      </li>`).join('')}</ol>`;
+  }
+  function tableHtml(g, rows) {
+    const G = GAMES[g];
+    return `<div class="table-wrap"><table class="board">
+      <caption class="sr-only">${G.name} leaderboard, ranked by ${G.higherIsBetter ? 'highest score' : 'fastest time'}</caption>
+      <thead><tr><th scope="col">Rank</th><th scope="col">Player</th><th scope="col" class="num">${G.metric}</th><th scope="col" class="date">Date</th></tr></thead>
+      <tbody>${rows.map((e, i) => `
+        <tr class="${e.id === lastSavedId ? 'is-new' : ''}">
+          <td><span class="${rankCls(i + 1)}">${i + 1}</span></td>
+          <td class="who">${esc(e.name)}${e.id === lastSavedId ? '<sl-badge variant="primary" pill>New</sl-badge>' : ''}</td>
+          <td class="num">${G.format(e.value)}</td>
+          <td class="date">${fmtDate(e.date)}</td>
+        </tr>`).join('')}</tbody></table></div>`;
+  }
+  function emptyHtml(g, compact) {
+    const G = GAMES[g];
+    return `<div class="state ${compact ? 'is-compact' : ''}">
+      <sl-icon name="trophy" aria-hidden="true"></sl-icon>
+      <p class="state-title">No ${G.name} scores yet</p>
+      ${compact ? '' : '<p class="state-text">The board is wide open. Finish a round and save your name to claim the top spot.</p>'}
+      <sl-button size="small" variant="primary" href="#/play/${g}">Play ${G.name}</sl-button>
+    </div>`;
+  }
+  function errorHtml(compact) {
+    return `<sl-alert variant="danger" open>
+      <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+      <strong>Couldn't load scores.</strong>${compact ? '' : ' The leaderboard server didn\'t respond. Check your connection and try again.'}
+      <div class="alert-actions"><sl-button size="small" data-retry><sl-icon slot="prefix" name="arrow-clockwise"></sl-icon>Retry</sl-button></div>
+    </sl-alert>`;
+  }
+
+  async function loadInto(el, g, { compact }) {
+    const token = (el._token = (el._token || 0) + 1);
+    el.setAttribute('aria-busy', 'true');
+    el.innerHTML = skeletonHtml(compact, compact ? 3 : 6);
+    try {
+      const rows = await api.list(g);
+      if (token !== el._token) return;
+      el.innerHTML = rows.length ? (compact ? compactHtml(g, rows.slice(0, 3)) : tableHtml(g, rows)) : emptyHtml(g, compact);
+      if (!compact) announce(rows.length ? `${GAMES[g].name} leaderboard loaded, ${rows.length} entries.` : `No ${GAMES[g].name} scores yet.`);
+    } catch {
+      if (token !== el._token) return;
+      el.innerHTML = errorHtml(compact);
+      el.querySelector('[data-retry]').addEventListener('click', () => loadInto(el, g, { compact }));
+    } finally {
+      if (token === el._token) el.removeAttribute('aria-busy');
+    }
+  }
+  const loadTopScores = () => $$('[data-compact]').forEach((el) => loadInto(el, el.dataset.compact, { compact: true }));
+  const loadBoard = (g) => loadInto($(`[data-board="${g}"]`), g, { compact: false });
+
+  // ---------- Home art ----------
+  function buildArt() {
+    const snake = $('.art-snake');
+    const path = ['2,4', '3,4', '4,4', '5,4', '5,3', '5,2', '6,2', '7,2', '8,2', '9,2'];
+    for (let y = 0; y < 7; y++) for (let x = 0; x < 16; x++) {
+      const s = document.createElement('span');
+      const key = `${x},${y}`;
+      if (key === path.at(-1)) s.className = 'head';
+      else if (path.includes(key)) s.className = 'on';
+      else if (key === '12,2') s.className = 'food';
+      snake.append(s);
+    }
+    const mines = $('.art-mines');
+    ['cc1..1cccc', 'cc1..12ccc', 'c21...1fcc', 'c1....13cc', 'c1..112ccc'].forEach((line) => {
+      for (const ch of line) {
+        const s = document.createElement('span');
+        if (ch === '.') s.className = 'o';
+        else if (/\d/.test(ch)) { s.className = `o n${ch}`; s.textContent = ch; }
+        else if (ch === 'f') s.className = 'f';
+        mines.append(s);
+      }
+    });
+  }
+
+  // ---------- Game shell: HUD + overlay ----------
+  const surface = $('#game-surface');
+  const overlayEl = $('#overlay');
+  const hudLabels = $$('[data-hud-label]');
+  const hudValues = $$('[data-hud-value]');
+  const pauseBtn = $('#btn-pause');
+  let game = null;
+  let pendingResult = null;
+  let overlayTimer = null;
+  let lastPauseKey = '';
+
+  function setHud(stats) {
+    stats.forEach(([label, value], i) => {
+      hudLabels[i].textContent = label;
+      hudValues[i].textContent = value;
+    });
+  }
+  function setPauseState(state) {
+    const paused = state === 'paused';
+    const key = `${state}`;
+    if (key === lastPauseKey) return;
+    lastPauseKey = key;
+    pauseBtn.disabled = !(state === 'running' || paused);
+    pauseBtn.innerHTML = `<sl-icon slot="prefix" name="${paused ? 'play-fill' : 'pause-fill'}"></sl-icon>${paused ? 'Resume' : 'Pause'}`;
+  }
+  function showOverlay({ title, text, actions = [], tone = '', focus = true }) {
+    clearTimeout(overlayTimer);
+    $('#overlay-title').textContent = title;
+    $('#overlay-text').textContent = text;
+    overlayEl.dataset.tone = tone;
+    const wrap = $('#overlay-actions');
+    wrap.replaceChildren(...actions.map((a) => {
+      const b = document.createElement('sl-button');
+      b.setAttribute('variant', a.variant || 'default');
+      if (a.href) b.setAttribute('href', a.href);
+      if (a.disabled) b.setAttribute('disabled', '');
+      b.innerHTML = `${a.icon ? `<sl-icon slot=\"prefix\" name=\"${a.icon}\"></sl-icon>` : ''}${esc(a.label)}`;
+      if (a.onClick) b.addEventListener('click', a.onClick);
+      return b;
+    }));
+    overlayEl.hidden = false;
+    surface.inert = true;
+    if (focus) requestAnimationFrame(() => wrap.querySelector('sl-button:not([disabled])')?.focus());
+  }
+  function hideOverlay() {
+    clearTimeout(overlayTimer);
+    overlayEl.hidden = true;
+    surface.inert = false;
+  }
+
+  function gameOver(id, value, elapsed) {
+    const G = GAMES[id];
+    const qualifies = id === 'minesweeper' || value > 0;
+    const title = id === 'snake' ? 'Game over' : 'Board cleared!';
+    const text = id === 'snake'
+      ? value > 0 ? `You scored ${G.format(value)} in ${fmtTime(elapsed)}.` : 'No points this time. Grab a dot to get on the board.'
+      : `Cleared in ${fmtTime(value)}. Nicely swept.`;
+    const result = { game: id, value, elapsed, saved: false, qualifies, title, text, tone: id === 'snake' ? '' : 'win' };
+    pendingResult = result;
+    announce(`${title} ${text}`);
+    renderResultOverlay();
+    if (qualifies) setTimeout(() => { if (pendingResult === result && !result.saved) openSave(); }, 450);
+  }
+  function renderResultOverlay() {
+    const r = pendingResult;
+    if (!r || r.preview) return;
+    const actions = [];
+    if (r.qualifies) actions.push(r.saved ? { label: 'Saved', icon: 'check2', disabled: true } : { label: 'Save score', variant: 'primary', icon: 'trophy', onClick: openSave });
+    actions.push({ label: 'Play again', variant: r.qualifies && !r.saved ? 'default' : 'primary', icon: 'arrow-counterclockwise', onClick: () => game?.reset() });
+    actions.push({ label: 'Leaderboard', variant: 'text', href: `#/leaderboard/${r.game}` });
+    showOverlay({ title: r.title, text: r.text, tone: r.tone, actions });
+  }
+
+  // ---------- Snake ----------
+  function createSnake() {
+    const N = 20, SIZE = 400, CELL = SIZE / N;
+    surface.replaceChildren();
+    surface.setAttribute('tabindex', '0');
+    surface.setAttribute('role', 'application');
+    surface.setAttribute('aria-label', 'Snake board');
+    const canvas = document.createElement('canvas');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = SIZE * dpr;
+    canvas.height = SIZE * dpr;
+    canvas.setAttribute('aria-hidden', 'true');
+    surface.append(canvas);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    let s, state = 'ready', tickT, clockT;
+    const same = (a, b) => a.x === b.x && a.y === b.y;
+    const hud = () => {
+      const best = record('snake');
+      setHud([['Score', s.score.toLocaleString('en')], ['Time', fmtTime(s.elapsed)], ['Record', best == null ? '—' : best.toLocaleString('en')]]);
+      setPauseState(state);
+    };
+    const clear = () => { clearTimeout(tickT); clearInterval(clockT); };
+    const speed = () => Math.max(60, 130 - Math.floor(s.score / 50) * 10);
+
+    function spawn() {
+      const free = [];
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!s.body.some((p) => p.x === x && p.y === y)) free.push({ x, y });
+      return free[Math.floor(Math.random() * free.length)] ?? null;
+    }
+    function rr(x, y, w, h, r) {
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+      ctx.fill();
+    }
+    function draw() {
+      ctx.fillStyle = '#0f131b';
+      ctx.fillRect(0, 0, SIZE, SIZE);
+      ctx.fillStyle = '#131824';
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if ((x + y) % 2) ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+      if (s.food) {
+        ctx.fillStyle = '#fb7185';
+        ctx.beginPath();
+        ctx.arc(s.food.x * CELL + CELL / 2, s.food.y * CELL + CELL / 2, CELL * 0.32, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      const len = s.body.length;
+      s.body.forEach((p, i) => {
+        ctx.globalAlpha = i === 0 ? 1 : 1 - (i / len) * 0.45;
+        ctx.fillStyle = i === 0 ? (s.dead ? '#fb7185' : '#a3e635') : '#84cc16';
+        rr(p.x * CELL + 2, p.y * CELL + 2, CELL - 4, CELL - 4, 5);
+      });
+      ctx.globalAlpha = 1;
+      const h = s.body[0], cx = h.x * CELL + CELL / 2, cy = h.y * CELL + CELL / 2;
+      const px = -s.dir.y, py = s.dir.x;
+      ctx.fillStyle = '#0b0d12';
+      for (const sgn of [-1, 1]) {
+        ctx.beginPath();
+        ctx.arc(cx + s.dir.x * 3 + px * 4 * sgn, cy + s.dir.y * 3 + py * 4 * sgn, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    function tick() {
+      if (s.queue.length) s.dir = s.queue.shift();
+      const h = s.body[0];
+      const next = { x: h.x + s.dir.x, y: h.y + s.dir.y };
+      const eats = s.food && same(next, s.food);
+      const body = eats ? s.body : s.body.slice(0, -1);
+      if (next.x < 0 || next.y < 0 || next.x >= N || next.y >= N || body.some((p) => same(p, next))) return over();
+      s.body.unshift(next);
+      if (eats) { s.score += 10; s.food = spawn(); } else s.body.pop();
+      draw();
+      hud();
+      if (!s.food) over();
+    }
+    function loop() {
+      tickT = setTimeout(() => { tick(); if (state === 'running') loop(); }, speed());
+    }
+    function reset({ focus = true } = {}) {
+      clear();
+      pendingResult = null;
+      s = { body: [{ x: 6, y: 10 }, { x: 5, y: 10 }, { x: 4, y: 10 }], dir: { x: 1, y: 0 }, queue: [], score: 0, elapsed: 0, dead: false };
+      s.food = spawn();
+      state = 'ready';
+      draw();
+      hud();
+      showOverlay({ title: 'Ready?', text: 'Steer with the arrow keys or WASD. Press Space to pause.', actions: [{ label: 'Start', variant: 'primary', icon: 'play-fill', onClick: start }], focus });
+    }
+    function start() {
+      if (state === 'running' || state === 'over') return;
+      state = 'running';
+      hideOverlay();
+      hud();
+      surface.focus();
+      loop();
+      clockT = setInterval(() => { s.elapsed++; hud(); }, 1000);
+    }
+    function over() {
+      clear();
+      state = 'over';
+      s.dead = true;
+      draw();
+      hud();
+      gameOver('snake', s.score, s.elapsed);
+    }
+    function pause() {
+      if (state !== 'running') return;
+      clear();
+      state = 'paused';
+      hud();
+      showOverlay({
+        title: 'Paused', tone: 'paused', text: 'Take a breather. Press Resume when ready.',
+        actions: [{ label: 'Resume', variant: 'primary', icon: 'play-fill', onClick: start }, { label: 'Restart', icon: 'arrow-counterclockwise', onClick: () => reset() }],
+      });
+    }
+    function togglePause() { state === 'running' ? pause() : state === 'paused' && start(); }
+    function turn(dx, dy) {
+      if (state === 'ready') start();
+      if (state !== 'running') return;
+      const last = s.queue.at(-1) || s.dir;
+      if ((last.x === -dx && last.y === -dy) || (last.x === dx && last.y === dy)) return;
+      if (s.queue.length < 3) s.queue.push({ x: dx, y: dy });
+    }
+    const DIRS = { ArrowUp: [0, -1], w: [0, -1], ArrowDown: [0, 1], s: [0, 1], ArrowLeft: [0, -1], a: [0, -1], ArrowRight: [1, 0], d: [1, 0] };
+    function onKey(e) {
+      if (e.target !== surface) return;
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (DIRS[k]) { e.preventDefault(); turn(...DIRS[k]); }
+      else if (k === ' ' || k === 'p') { e.preventDefault(); state === 'ready' ? start() : togglePause(); }
+      else if (k === 'Enter' && state === 'ready') { e.preventDefault(); start(); }
+    }
+    return { reset, pause, togglePause, turn, onKey, refreshHud: hud, destroy: clear };
+  }
+
+  // ---------- Minesweeper ----------
+  function createMines() {
+    const R = 9, C = 9, M = 10, TOTAL = R * C;
+    surface.replaceChildren();
+    surface.removeAttribute('tabindex');
+    surface.removeAttribute('role');
+    surface.removeAttribute('aria-label');
+    const grid = document.createElement('div');
+    grid.className = 'mines';
+    grid.setAttribute('role', 'grid');
+    grid.setAttribute('aria-label', `Minesweeper board, ${R} by ${C}, ${M} mines`);
+    grid.setAttribute('aria-describedby', 'controls-help');
+    const btns = [];
+    for (let r = 0; r < R; r++) {
+      const rowEl = document.createElement('div');
+      rowEl.setAttribute('role', 'row');
+      for (let c = 0; c < C; c++) {
+        const cellEl = document.createElement('div');
+        cellEl.setAttribute('role', 'gridcell');
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cell';
+        b.dataset.i = String(r * C + c);
+        b.tabIndex = -1;
+        cellEl.append(b);
+        rowEl.append(cellEl);
+        btns.push(b);
+      }
+      grid.append(rowEl);
+    }
+    surface.append(grid);
+
+    let cells, state, opened, flags, elapsed, clockT, focusIdx = 40;
+    const hud = () => {
+      const best = record('minesweeper');
+      setHud([['Time', fmtTime(elapsed)], ['Mines left', String(M - flags)], ['Record', best == null ? '—' : fmtTime(best)]]);
+      setPauseState(state);
+    };
+    const nb = (i) => {
+      const r = Math.floor(i / C), c = i % C, out = [];
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        if (!dr && !dc) continue;
+        const rr = r + dr, cc = c + dc;
+        if (rr >= 0 && rr < R && cc >= 0 && cc < C) out.push(rr * C + cc);
+      }
+      return out;
+    };
+    const startClock = () => { clearInterval(clockT); clockT = setInterval(() => { elapsed++; hud(); }, 1000); };
+
+    function paint(i) {
+      const c = cells[i], b = btns[i];
+      b.className = 'cell';
+      b.removeAttribute('data-n');
+      let label = 'hidden', html = '';
+      if (c.open && c.mine) { b.classList.add('open', 'mine'); label = 'mine'; }
+      else if (c.wrong) { b.classList.add('wrong'); html = '<sl-icon name="flag-fill" aria-hidden="true"></sl-icon>'; label = 'wrong flag'; }
+      else if (c.open) {
+        b.classList.add('open');
+        if (c.n) { html = String(c.n); b.dataset.n = String(c.n); label = `${c.n} adjacent mine${c.n > 1 ? 's' : ''}`; }
+        else label = 'empty';
+      } else if (c.flag) { b.classList.add('flagged'); html = '<sl-icon name="flag-fill" aria-hidden="true"></sl-icon>'; label = 'flagged'; }
+      if (c.boom) b.classList.add('boom');
+      b.innerHTML = html;
+      b.setAttribute('aria-label', `Row ${Math.floor(i / C) + 1}, column ${(i % C) + 1}, ${label}`);
+    }
+    function setFocus(i, doFocus) {
+      btns[focusIdx].tabIndex = -1;
+      focusIdx = i;
+      btns[i].tabIndex = 0;
+      if (doFocus) btns[i].focus();
+    }
+    function plant(safe) {
+      const banned = new Set([safe, ...nb(safe)]);
+      let placed = 0;
+      while (placed < M) {
+        const i = Math.floor(Math.random() * TOTAL);
+        if (banned.has(i) || cells[i].mine) continue;
+        cells[i].mine = true;
+        placed++;
+      }
+      cells.forEach((c, i) => { c.n = nb(i).filter((j) => cells[j].mine).length; });
+    }
+    function reset({ focus = true } = {}) {
+      clearInterval(clockT);
+      pendingResult = null;
+      cells = Array.from({ length: TOTAL }, () => ({ mine: false, open: false, flag: false, n: 0 }));
+      state = 'ready'; opened = 0; flags = 0; elapsed = 0;
+      btns.forEach((_, i) => paint(i));
+      hideOverlay();
+      setFocus(focusIdx, focus);
+      hud();
+    }
+    function reveal(i) {
+      if (state === 'over' || state === 'paused') return;
+      const cell = cells[i];
+      if (cell.open || cell.flag) return;
+      if (state === 'ready') { plant(i); state = 'running'; startClock(); }
+      if (cell.mine) return lose(i);
+      const stack = [i];
+      while (stack.length) {
+        const j = stack.pop();
+        const c = cells[j];
+        if (c.open || c.flag) continue;
+        c.open = true;
+        opened++;
+        paint(j);
+        if (c.n === 0) nb(j).forEach((k) => { if (!cells[k].open && !cells[k].mine) stack.push(k); });
+      }
+      hud();
+      if (opened === TOTAL - M) win();
+    }
+    function flag(i) {
+      if (state === 'over' || state === 'paused') return;
+      const c = cells[i];
+      if (c.open) return;
+      if (!c.flag && flags >= M) { announce('No flags left.'); return; }
+      c.flag = !c.flag;
+      flags += c.flag ? 1 : -1;
+      paint(i);
+      hud();
+    }
+    function lose(i) {
+      state = 'over';
+      clearInterval(clockT);
+      cells[i].boom = true;
+      cells.forEach((c, j) => {
+        if (c.mine) { c.open = true; c.flag = false; }
+        else if (c.flag) c.wrong = true;
+        paint(j);
+      });
+      hud();
+      announce('Boom. You hit a mine.');
+      overlayTimer = setTimeout(() => showOverlay({
+        title: 'Boom.', tone: 'lost', text: `You hit a mine at ${fmtTime(elapsed)}. Every sweeper has been there.`,
+        actions: [{ label: 'Try again', variant: 'primary', icon: 'arrow-counterclockwise', onClick: () => reset() }, { label: 'All games', variant: 'text', href: '#/home' }],
+      }), 800);
+    }
+    function win() {
+      state = 'over';
+      clearInterval(clockT);
+      cells.forEach((c, j) => { if (c.mine && !c.flag) { c.flag = true; paint(j); } });
+      flags = M;
+      hud();
+      const time = Math.max(1, elapsed);
+      overlayTimer = setTimeout(() => gameOver('minesweeper', time, time), 400);
+    }
+    function pause() {
+      if (state !== 'running') return;
+      clearInterval(clockT);
+      state = 'paused';
+      hud();
+      showOverlay({ title: 'Paused', tone: 'paused', text: 'The board is hidden while the clock is stopped.', actions: [{ label: 'Resume', variant: 'primary', icon: 'play-fill', onClick: resume }] });
+    }
+    function resume() {
+      if (state !== 'paused') return;
+      state = 'running';
+      hideOverlay();
+      startClock();
+      hud();
+      setFocus(focusIdx, true);
+    }
+    function togglePause() { state === 'running' ? pause() : state === 'paused' && resume(); }
+
+    grid.addEventListener('click', (e) => {
+      const b = e.target.closest('.cell');
+      if (!b) return;
+      const i = Number(b.dataset.i);
+      setFocus(i, false);
+      $('#flag-mode').checked ? flag(i) : reveal(i);
+    });
+    grid.addEventListener('contextmenu', (e) => {
+      const b = e.target.closest('.cell');
+      if (!b) return;
+      e.preventDefault();
+      flag(Number(b.dataset.i));
+    });
+    function onKey(e) {
+      const b = e.target.closest?.('.cell');
+      if (!b) return;
+      const i = Number(b.dataset.i);
+      let r = Math.floor(i / C), c = i % C;
+      const move = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[e.key];
+      if (move) {
+        e.preventDefault();
+        r = Math.min(R - 1, Math.max(0, r + move[0]));
+        c = Math.min(C - 1, Math.max(0, c + move[1]));
+        setFocus(r * C + c, true);
+      } else if (e.key === 'Home') { e.preventDefault(); setFocus(e.ctrlKey ? 0 : r * C, true); }
+      else if (e.key === 'End') { e.preventDefault(); setFocus(e.ctrlKey ? TOTAL - 1 : r * C + C - 1, true); }
+      else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); flag(i); }
+      else if (e.key === 'Enter') { e.preventDefault(); reveal(i); }
+      else if (e.key === 'p' || e.key === 'P') { e.preventDefault(); togglePause(); }
+    }
+    return { reset, pause, togglePause, onKey, refreshHud: hud, destroy: () => { clearInterval(clockT); clearTimeout(overlayTimer); } };
+  }
+
+  const HELP = {
+    snake: '<kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> or <kbd>WASD</kbd> to steer · <kbd>Space</kbd> to pause',
+    minesweeper: 'Arrow keys move · <kbd>Enter</kbd> reveal · <kbd>F</kbd> flag · <kbd>P</kbd> pause · right-click to flag',
+  };
+
+  function startGameView(id, focus) {
+    $('#play-title').textContent = GAMES[id].name;
+    $('#view-play').dataset.game = id;
+    $('#controls-help').innerHTML = HELP[id];
+    lastPauseKey = '';
+    game = id === 'snake' ? createSnake() : createMines();
+    game.reset({ focus });
+  }
+  function stopGame() {
+    game?.destroy();
+    game = null;
+    pendingResult = null;
+    hideOverlay();
+  }
+
+  surface.addEventListener('keydown', (e) => game?.onKey(e));
+  $$('.dpad sl-button').forEach((b) => b.addEventListener('click', () => {
+    const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[b.dataset.dir];
+    game?.turn?.(...d);
+  }));
+  pauseBtn.addEventListener('click', () => game?.togglePause());
+  $('#btn-restart').addEventListener('click', () => game?.reset());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) game?.pause(); });
+
+  // ---------- Save dialog ----------
+  const dialog = $('#save-dialog');
+  const form = $('#save-form');
+  const nameInput = $('#save-name');
+  const saveBtn = $('#save-submit');
+  const cancelBtn = $('#save-cancel');
+  const saveError = $('#save-error');
+  let saving = false;
+
+  async function openSave() {
+    const r = pendingResult;
+    if (!r) return;
+    const G = GAMES[r.game];
+    $('#save-game').textContent = G.name;
+    $('#save-metric').textContent = G.metric;
+    $('#save-value').textContent = G.format(r.value);
+    const count = getDb()[r.game]?.length ?? 0;
+    const rank = projectedRank(r.game, r.value);
+    $('#save-rank').textContent = rank === 1 ? "That's a new #1. Claim it." : `That would place you #${rank} of ${count + 1}.`;
+    // Ensure Shoelace components are upgraded before calling their methods
+    await Promise.all([
+      customElements.whenDefined('sl-input'),
+      customElements.whenDefined('sl-alert'),
+      customElements.whenDefined('sl-dialog')
+    ]);
+    saveError.open = false;
+    nameInput.value = lastName;
+    // reset custom validity for a fresh attempt
+    nameInput.setCustomValidity('');
+    dialog.show();
+  }
+  function setSaving(on) {
+    saving = on;
+    saveBtn.loading = on;
+    cancelBtn.disabled = on;
+    nameInput.readonly = on;
+  }
+  nameInput.addEventListener('sl-input', () => nameInput.setCustomValidity(''));
+  cancelBtn.addEventListener('click', () => dialog.hide());
+  dialog.addEventListener('sl-request-close', (e) => { if (saving) e.preventDefault(); });
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const r = pendingResult;
+    if (saving || !r) return;
+    const name = nameInput.value.trim().replace(/\s+/g, ' ');
+    if (name.length < 2) {
+      nameInput.setCustomValidity('Enter at least 2 characters.');
+      nameInput.reportValidity();
+      return;
+    }
+    saveError.open = false;
+    setSaving(true);
+    try {
+      const { entry, rank } = await api.save(r.game, name, r.value);
+      lastName = name;
+      lastSavedId = entry.id;
+      r.saved = true;
+      setSaving(false);
+      await dialog.hide();
+      renderResultOverlay();
+      game?.refreshHud();
+      notify(`Saved! ${name} is #${rank} on ${GAMES[r.game].name}.`, 'success', 'check2-circle');
+    } catch {
+      setSaving(false);
+      saveError.open = true;
+    }
+  });
+
+  // ---------- Demo drawer ----------
+  const drawer = $('#demo-drawer');
+  const netBadge = $('#net-badge');
+  $('#open-demo').addEventListener('click', () => drawer.show());
+  $('#close-demo').addEventListener('click', () => drawer.hide());
+  function refreshVisible() {
+    if (!$('#view-home').hidden) loadTopScores();
+    if (!$('#view-leaderboard').hidden) loadBoard(currentBoard);
+    game?.refreshHud();
+  }
+  $('#net-mode').addEventListener('sl-change', (e) => {
+    sim.network = e.target.value;
+    netBadge.hidden = sim.network === 'normal';
+    netBadge.setAttribute('variant', sim.network === 'offline' ? 'danger' : 'warning');
+    netBadge.textContent = sim.network === 'offline' ? 'Offline' : 'Slow network';
+    refreshVisible();
+  });
+  $('#clear-data').addEventListener('click', () => {
+    api.clear();
+    lastSavedId = null;
+    refreshVisible();
+    notify('All scores cleared.', 'neutral', 'trash');
+  });
+  $('#restore-data').addEventListener('click', () => {
+    api.restore();
+    lastSavedId = null;
+    refreshVisible();
+    notify('Sample scores restored.', 'primary', 'arrow-repeat');
+  });
+  $('#preview-dialog').addEventListener('click', async () => {
+    await drawer.hide();
+    pendingResult = { game: 'snake', value: 230, elapsed: 84, saved: false, preview: true };
+    openSave();
+  });
+  $('#preview-success').addEventListener('click', () => notify('Saved! Mira is #2 on Snake.', 'success', 'check2-circle'));
+  $('#preview-error').addEventListener('click', () => notify("Couldn't reach the leaderboard. Try again.", 'danger', 'exclamation-octagon'));
+
+  // ---------- Router ----------
+  const views = { home: $('#view-home'), play: $('#view-play'), leaderboard: $('#view-leaderboard') };
+  const tabs = $('#board-tabs');
+  let currentBoard = 'snake';
+  let suppressTab = false;
+  let firstRoute = true;
+
+  tabs.addEventListener('sl-tab-show', (e) => {
+    if (suppressTab) return;
+    currentBoard = e.detail.name;
+    history.replaceState(null, '', `#/leaderboard/${currentBoard}`);
+    loadBoard(currentBoard);
+  });
+  $('#refresh-board').addEventListener('click', () => loadBoard(currentBoard));
+  $('#refresh-top').addEventListener('click', loadTopScores);
+  $('#skip-link').addEventListener('click', (e) => { e.preventDefault(); $('#main').focus(); });
+
+  async function showBoard(g) {
+    currentBoard = g;
+    loadBoard(g);
+    await customElements.whenDefined('sl-tab-group');
+    await tabs.updateComplete;
+    suppressTab = true;
+    tabs.show(g);
+    suppressTab = false;
+  }
+
+  function router() {
+    const [view = 'home', param] = location.hash.replace(/^#\/?/, '').split('/');
+    let name = views[view] ? view : 'home';
+    if (name === 'play' && !GAMES[param]) name = 'home';
+    stopGame();
+    if (dialog.open && !saving) dialog.hide();
+    for (const [k, el] of Object.entries(views)) el.hidden = k !== name;
+    $$('[data-nav]').forEach((a) => {
+      const active = a.dataset.nav === (name === 'leaderboard' ? 'leaderboard' : 'home');
+      active ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
+    });
+
+    if (name === 'home') { document.title = 'Pocket Arcade'; loadTopScores(); }
+    if (name === 'leaderboard') { document.title = 'Leaderboard · Pocket Arcade'; showBoard(GAMES[param] ? param : 'snake'); }
+    if (name === 'play') { document.title = `${GAMES[param].name} · Pocket Arcade`; startGameView(param, !firstRoute); }
+
+    if (!firstRoute) {
+      window.scrollTo(0, 0);
+      if (name !== 'play') views[name].querySelector('h1').focus();
+    }
+    firstRoute = false;
+  }
+
+  buildArt();
+  if (!location.hash) history.replaceState(null, '', '#/home');
+  window.addEventListener('hashchange', router);
+  router();
+</script>
+
 </body>
 </html>
