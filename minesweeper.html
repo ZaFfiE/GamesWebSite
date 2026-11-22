@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minesweeper</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Minimal extra styles specific to Minesweeper */
+    .mine-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .mine-controls label { color: var(--muted); font-size: 0.95rem; }
+    .mine-controls select, .mine-controls button { 
+      background: var(--panel); color: var(--text); border: 1px solid rgba(255,255,255,0.12); 
+      border-radius: 8px; padding: 6px 10px; 
+    }
+    .mine-grid { display: inline-grid; gap: 2px; padding: 8px; background: #0b0e20; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 10px 30px rgba(0,0,0,0.4); }
+    .cell { width: 28px; height: 28px; display: grid; place-items: center; font-weight: 700; user-select: none; cursor: pointer; border-radius: 6px; }
+    .cell.hidden { background: #1a2140; border: 1px solid rgba(255,255,255,0.06); }
+    .cell.revealed { background: #12162e; border: 1px solid rgba(255,255,255,0.04); }
+    .cell.flag { color: var(--accent-2); }
+    .cell.mine { color: #f87171; }
+    .hud-row { display: flex; gap: 16px; align-items: center; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>Minesweeper</h1>
+  </header>
+  <main class="container">
+    <section class="game-area">
+      <div class="hud">
+        <div class="hud-row">
+          <div>Time: <span id="time">0</span>s</div>
+          <div>Mines: <span id="mines-left">0</span></div>
+          <div><a href="index.html"><- Back to games</a></div>
+        </div>
+        <div class="mine-controls">
+          <label>Difficulty
+            <select id="difficulty">
+              <option value="beginner">Beginner 9x9, 10 mines</option>
+              <option value="intermediate">Intermediate 16x16, 40 mines</option>
+              <option value="expert">Expert 30x16, 99 mines</option>
+            </select>
+          </label>
+          <button id="reset">New Game</button>
+        </div>
+      </div>
+      <div id="grid" class="mine-grid" aria-label="Minesweeper grid" role="grid"></div>
+    </section>
+  </main>
+  <script src="minesweeper.js"></script>
+</body>
+</html>
